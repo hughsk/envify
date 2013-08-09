@@ -47,3 +47,33 @@ test('Ignores assignments', function(t) {
       , 'process.env.UP'
     ].join('\n'))
 })
+
+test('Doesn\'t ignore assigning to a variable', function(t) {
+  var buffer = ''
+  var stream = envify({
+      LOREM: 'ipsum'
+    , HELLO: 'world'
+  })
+
+  stream()
+    .on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1, buffer.indexOf('foo = "ipsum"'))
+      t.notEqual(-1, buffer.indexOf('oof = "ipsum"'))
+      t.notEqual(-1, buffer.indexOf('oof.bar = "ipsum"'))
+      t.notEqual(-1, buffer.indexOf('bar = "world"'))
+      t.notEqual(-1, buffer.indexOf('rab = "world"'))
+      t.notEqual(-1, buffer.indexOf('process.env.NOTTHERE'))
+      t.notEqual(-1, buffer.indexOf('process.env.UNDEFINED'))
+      t.end()
+    })
+    .end([
+        'var foo = process.env.LOREM'
+      , 'oof = process.env.LOREM'
+      , 'oof.bar = process.env.LOREM'
+      , 'var bar = process.env.HELLO || null'
+      , 'rab = process.env.HELLO || null'
+      , 'a = process.env.UNDEFINED'
+      , 'b = process.env.NOTTHERE || null'
+    ].join('\n'))
+})

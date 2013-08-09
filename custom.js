@@ -23,10 +23,14 @@ module.exports = function(env) {
           node.parent.parent.property &&
         ( node.parent.parent.property.name ||
           node.parent.parent.property.value ) &&
-        ( node.parent.parent.parent
-        ? node.parent.parent.parent.type !== 'AssignmentExpression'
-        : true )
-        )) return
+        (!node.parent.parent.parent
+        ? true
+        :!(
+          node.parent.parent.parent.type === 'AssignmentExpression' &&
+          node.parent.parent.parent.left.type === 'MemberExpression' &&
+          node.parent.parent.parent.left.object.object &&
+          node.parent.parent.parent.left.object.object.name === 'process'
+        )))) return
 
         var key = node.parent.parent.property.name ||
                   node.parent.parent.property.value
