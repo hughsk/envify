@@ -6,6 +6,8 @@ module.exports = function(env) {
   return envify
 
   function envify(file) {
+    if (/\.json$/.test(file)) return through();
+
     var buffer = ''
 
     return through(function(data) {
