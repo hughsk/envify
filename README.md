@@ -76,7 +76,7 @@ var browserify = require('browserify')
   , envify = require('envify/custom')
   , fs = require('fs')
 
-var bundle = browserify('main.js')
+var b = browserify('main.js')
   , output = fs.createWriteStream('bundle.js')
 
 b.transform(envify({
