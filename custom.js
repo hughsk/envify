@@ -8,12 +8,12 @@ module.exports = function(env) {
   function envify(file) {
     if (/\.json$/.test(file)) return through();
 
-    var buffer = ''
+    var buffer = []
 
     return through(function(data) {
-      buffer += data
+      buffer.push(data)
     }, function processFile() {
-      var output = falafel(buffer, function(node) {
+      var output = falafel(buffer.join(''), function(node) {
         if (!(
           node.type === 'Identifier' &&
           node.name === 'process' &&
