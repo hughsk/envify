@@ -1,5 +1,9 @@
 var through = require('through')
-  , falafel = require('falafel')
+  , recast = require('recast')
+  , n = recast.types.namedTypes
+  , b = recast.types.builders
+  , traverse = recast.types.traverse
+  , processEnvPattern = /\bprocess\.env\b/
 
 module.exports = function(env) {
   env = env || process.env || {}
@@ -8,48 +12,37 @@ module.exports = function(env) {
   function envify(file) {
     if (/\.json$/.test(file)) return through();
 
-    var buffer = ''
+    var buffer = []
 
     return through(function(data) {
-      buffer += data
+      buffer.push(data)
     }, function processFile() {
-      var output = falafel(buffer, function(node) {
-        if (!(
-          node.type === 'Identifier' &&
-          node.name === 'process' &&
-          node.parent &&
-          node.parent.property &&
-          node.parent.property.type === 'Identifier' &&
-          node.parent.property.name === 'env' &&
-          node.parent.parent &&
-          node.parent.parent.property &&
-        ( node.parent.parent.property.name ||
-          node.parent.parent.property.value ) &&
-        (!node.parent.parent.parent
-        ? true
-        :!(
-          node.parent.parent.parent.type === 'AssignmentExpression' &&
-          node.parent.parent.parent.left.type === 'MemberExpression' &&
-          node.parent.parent.parent.left.object.object &&
-          node.parent.parent.parent.left.object.object.name === 'process'
-        )))) return
+      var source = buffer.join('')
 
-        var key = node.parent.parent.property.name ||
-                  node.parent.parent.property.value
+      if (processEnvPattern.test(source)) {
+        var ast = recast.parse(source)
 
-        if (!(key in env)) return
+        traverse(ast, function(node) {
+          if (n.MemberExpression.check(node) &&
+              !node.computed &&
+              n.Identifier.check(node.property) &&
+              n.MemberExpression.check(node.object) &&
+              n.Identifier.check(node.object.object) &&
+              node.object.object.name === "process" &&
+              n.Identifier.check(node.object.property) &&
+              node.object.property.name === "env") {
+            var key = node.property.name
+            if (key in env) {
+              this.replace(b.literal(env[key]))
+              return false
+            }
+          }
+        });
 
-        node.parent.parent.update(
-          env[key] ? JSON.stringify(env[key]) :
-          env[key] === false ? 'false'        :
-          env[key] === null ? 'null'          :
-          env[key] === '' ? '""'              :
-          env[key] === 0 ? '0'                :
-          'undefined'
-        )
-      })
+        source = recast.print(ast).code
+      }
 
-      this.queue(String(output))
+      this.queue(source);
       this.queue(null)
     })
   }
