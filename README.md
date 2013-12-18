@@ -84,3 +84,10 @@ b.transform(envify({
 }))
 b.bundle().pipe(output)
 ```
+
+## Contributors ##
+
+* [hughsk](http://github.com/hughsk)
+* [benjamn](http://github.com/benjamn)
+* [zag2art](http://github.com/zag2art)
+* [bjoerge](http://github.com/bjoerge)
