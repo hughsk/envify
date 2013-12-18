@@ -7,10 +7,9 @@ var through = require('through')
 
 module.exports = function(env) {
   env = env || process.env || {}
-  return envify
 
-  function envify(file) {
-    if (/\.json$/.test(file)) return through();
+  return function envify(file) {
+    if (/\.json$/.test(file)) return through()
 
     var buffer = []
 
@@ -23,14 +22,16 @@ module.exports = function(env) {
         var ast = recast.parse(source)
 
         traverse(ast, function(node) {
-          if (n.MemberExpression.check(node) &&
-              !node.computed &&
-              n.Identifier.check(node.property) &&
-              n.MemberExpression.check(node.object) &&
-              n.Identifier.check(node.object.object) &&
-              node.object.object.name === "process" &&
-              n.Identifier.check(node.object.property) &&
-              node.object.property.name === "env") {
+          if (
+               n.MemberExpression.check(node)
+            && !node.computed
+            && n.Identifier.check(node.property)
+            && n.MemberExpression.check(node.object)
+            && n.Identifier.check(node.object.object)
+            && node.object.object.name === 'process'
+            && n.Identifier.check(node.object.property)
+            && node.object.property.name === 'env'
+          ) {
             var key = node.property.name
             if (key in env) {
               this.replace(b.literal(env[key]))
@@ -42,7 +43,7 @@ module.exports = function(env) {
         source = recast.print(ast).code
       }
 
-      this.queue(source);
+      this.queue(source)
       this.queue(null)
     })
   }

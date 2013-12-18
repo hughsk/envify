@@ -16,7 +16,7 @@
   "author": "Hugh Kennedy <hughskennedy@gmail.com> (http://hughskennedy.com/)",
   "license": "MIT",
   "devDependencies": {
-    "tape": "~0.3.3"
+    "tape": "~2.3.2"
   },
   "dependencies": {
     "through": "~2.3.4",
