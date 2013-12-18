@@ -1,4 +1,4 @@
-# envify #
+# envify  [![Build Status](https://secure.travis-ci.org/hughsk/envify.png?branch=master)](http://travis-ci.org/hughsk/envify) [![stable](http://hughsk.github.io/stability-badges/dist/stable.svg)](http://github.com/hughsk/stability-badges) #
 
 Selectively replace Node-style environment variables with plain strings.
 Available as a standalone CLI tool and a
