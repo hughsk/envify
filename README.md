@@ -59,6 +59,15 @@ Or standalone:
 envify index.js > bundle.js
 ```
 
+You can also specify additional custom environment variables using
+browserify's [subarg](http://github.com/substack/subarg) syntax, which is
+available in versions 3.25.0 and above:
+
+``` bash
+browserify index.js -t [ envify --NODE_ENV development ] > bundle.js
+browserify index.js -t [ envify --NODE_ENV production  ] > bundle.js
+```
+
 ## Module Usage ##
 
 **require('envify')**

@@ -77,3 +77,25 @@ test('Doesn\'t ignore assigning to a variable', function(t) {
       , 'b = process.env.NOTTHERE || null'
     ].join('\n'))
 })
+
+test('subarg syntax', function(t) {
+  var buffer = ''
+  var stream = envify({
+      OVERRIDES: 'development'
+    , UNTOUCHED: 'staging'
+  })
+
+  stream(__filename, {
+      _: ['bogus', 'arguments']
+    , OVERRIDES: 'production'
+  }).on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1, buffer.indexOf('foo = "production"'))
+      t.notEqual(-1, buffer.indexOf('bar = "staging"'))
+      t.end()
+    })
+    .end([
+        'var foo = process.env.OVERRIDES'
+      , 'var bar = process.env.UNTOUCHED'
+    ].join('\n'))
+})
