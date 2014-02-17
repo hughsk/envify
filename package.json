@@ -21,7 +21,8 @@
   "dependencies": {
     "xtend": "~2.1.2",
     "through": "~2.3.4",
-    "recast": "~0.5.6"
+    "esprima-fb": "~3001.1.0-dev-harmony-fb",
+    "jstransform": "~3.0.0"
   },
   "keywords": [
     "environment",

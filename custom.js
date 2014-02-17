@@ -1,11 +1,9 @@
 var through = require('through')
-  , recast = require('recast')
   , xtend = require('xtend')
+  , jstransform = require('jstransform')
+  , createVisitors = require('./visitors')
 
-var types = recast.types.namedTypes
-  , build = recast.types.builders
-  , traverse = recast.types.traverse
-  , processEnvPattern = /\bprocess\.env\b/
+var processEnvPattern = /\bprocess\.env\b/
 
 module.exports = function(rootEnv) {
   rootEnv = rootEnv || process.env || {}
@@ -28,28 +26,7 @@ module.exports = function(rootEnv) {
       var source = buffer.join('')
 
       if (processEnvPattern.test(source)) {
-        var ast = recast.parse(source)
-
-        traverse(ast, function(node) {
-          if (
-               types.MemberExpression.check(node)
-            && !node.computed
-            && types.Identifier.check(node.property)
-            && types.MemberExpression.check(node.object)
-            && types.Identifier.check(node.object.object)
-            && node.object.object.name === 'process'
-            && types.Identifier.check(node.object.property)
-            && node.object.property.name === 'env'
-          ) {
-            var key = node.property.name
-            if (key in env) {
-              this.replace(build.literal(env[key]))
-              return false
-            }
-          }
-        });
-
-        source = recast.print(ast).code
+        source = jstransform.transform(createVisitors(env), source).code;
       }
 
       this.queue(source)
