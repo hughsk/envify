@@ -1,6 +1,6 @@
 {
   "name": "envify",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Selectively replace Node-style environment variables with plain strings.",
   "main": "index.js",
   "scripts": {
