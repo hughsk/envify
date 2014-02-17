@@ -1,16 +1,16 @@
-var Syntax = require('esprima-fb').Syntax;
-var utils = require('jstransform/src/utils');
+var Syntax = require('esprima-fb').Syntax
+var utils = require('jstransform/src/utils')
 
 function create(env) {
 
   function visitProcessEnv(traverse, node, path, state) {
-    var key = node.property.name;
+    var key = node.property.name
     if (env[key] !== undefined) {
-      utils.catchup(node.range[0], state);
-      utils.append(JSON.stringify(env[key]), state);
-      utils.move(node.range[1], state);
+      utils.catchup(node.range[0], state)
+      utils.append(JSON.stringify(env[key]), state)
+      utils.move(node.range[1], state)
     }
-    return false;
+    return false
   }
 
   visitProcessEnv.test = function(node, path, state) {
@@ -24,9 +24,9 @@ function create(env) {
       && node.object.property.type === Syntax.Identifier
       && node.object.property.name === 'env'
     )
-  };
+  }
 
-  return [visitProcessEnv];
+  return [visitProcessEnv]
 }
 
-module.exports = create;
+module.exports = create
