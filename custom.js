@@ -29,7 +29,7 @@ module.exports = function(rootEnv) {
         try {
           source = jstransform.transform(createVisitors(env), source).code
         } catch(err) {
-          this.emit('error', err)
+          return this.emit('error', err)
         }
       }
 
