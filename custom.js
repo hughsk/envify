@@ -28,9 +28,8 @@ module.exports = function(rootEnv) {
       if (processEnvPattern.test(source)) {
         try {
           source = jstransform.transform(createVisitors(env), source).code
-        }
-        catch(err) {
-          this.emit('error', err);
+        } catch(err) {
+          this.emit('error', err)
         }
       }
 
