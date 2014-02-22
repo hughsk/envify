@@ -26,7 +26,12 @@ module.exports = function(rootEnv) {
       var source = buffer.join('')
 
       if (processEnvPattern.test(source)) {
-        source = jstransform.transform(createVisitors(env), source).code
+        try {
+          source = jstransform.transform(createVisitors(env), source).code
+        }
+        catch(err) {
+          this.emit('error', err);
+        }
       }
 
       this.queue(source)
