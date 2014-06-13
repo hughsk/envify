@@ -12,9 +12,7 @@ module.exports = function(rootEnv) {
     if (/\.json$/.test(file)) return through()
 
     var buffer = []
-    var env = argv
-      ? xtend(rootEnv, argv)
-      : rootEnv
+    argv = argv || {}
 
     return through(write, flush)
 
@@ -27,7 +25,8 @@ module.exports = function(rootEnv) {
 
       if (processEnvPattern.test(source)) {
         try {
-          source = jstransform.transform(createVisitors(env), source).code
+          var visitors = createVisitors([argv, rootEnv])
+          source = jstransform.transform(visitors, source).code
         } catch(err) {
           return this.emit('error', err)
         }

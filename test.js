@@ -99,3 +99,26 @@ test('subarg syntax', function(t) {
       , 'var bar = process.env.UNTOUCHED'
     ].join('\n'))
 })
+
+test('Handles getter properties', function(t) {
+  var env    = {}
+  var buffer = ''
+  var stream = envify(env)
+  var counter = 0
+
+  Object.defineProperty(env, 'DYNAMIC', {
+    // please don't actually do this:
+    get: function() { return counter++ ? 'really!' : 'dynamic!' }
+  })
+
+  stream().on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1, buffer.indexOf('foo = "dynamic!"'))
+      t.notEqual(-1, buffer.indexOf('bar = "really!"'))
+      t.end()
+    })
+    .end([
+        'var foo = process.env.DYNAMIC'
+      , 'var bar = process.env.DYNAMIC'
+    ].join('\n'))
+})

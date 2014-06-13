@@ -1,15 +1,21 @@
 var Syntax = require('esprima-fb').Syntax
 var utils = require('jstransform/src/utils')
 
-function create(env) {
+function create(envs) {
 
   function visitProcessEnv(traverse, node, path, state) {
     var key = node.property.name
-    if (env[key] !== undefined) {
-      utils.catchup(node.range[0], state)
-      utils.append(JSON.stringify(env[key]), state)
-      utils.move(node.range[1], state)
+
+    for (var i = 0; i < envs.length; i++) {
+      var value = envs[i][key]
+      if (value !== undefined) {
+        utils.catchup(node.range[0], state)
+        utils.append(JSON.stringify(value), state)
+        utils.move(node.range[1], state)
+        return false
+      }
     }
+
     return false
   }
 
