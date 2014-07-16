@@ -45,6 +45,16 @@ By running this through a good minifier (e.g.
 [UglifyJS2](https://github.com/mishoo/UglifyJS)), the above code would be
 stripped out completely.
 
+However, if you bundled the same script with `NODE_ENV` set to `development`:
+
+``` javascript
+if ("development" === "development") {
+  console.log('development only')
+}
+```
+
+The `if` statement will evaluate to `true`, so the code won't be removed.
+
 ## CLI Usage ##
 
 With browserify:
