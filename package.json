@@ -21,7 +21,7 @@
   "dependencies": {
     "xtend": "~2.1.2",
     "through": "~2.3.4",
-    "esprima-fb": "~3001.1.0-dev-harmony-fb",
+    "esprima-fb": "^4001.3001.0-dev-harmony-fb",
     "jstransform": "~3.0.0"
   },
   "keywords": [
