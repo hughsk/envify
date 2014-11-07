@@ -21,7 +21,7 @@
   "dependencies": {
     "xtend": "~2.1.2",
     "through": "~2.3.4",
-    "jstransform": "^6.3.2"
+    "jstransform": "^7.0.0"
   },
   "keywords": [
     "environment",
