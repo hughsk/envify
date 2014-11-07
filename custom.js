@@ -1,5 +1,4 @@
 var through = require('through')
-  , xtend = require('xtend')
   , jstransform = require('jstransform')
   , createVisitors = require('./visitors')
 
