@@ -17,7 +17,7 @@
   "license": "MIT",
   "devDependencies": {
     "tap-spec": "^1.0.1",
-    "tape": "~2.3.2"
+    "tape": "^3.0.3"
   },
   "dependencies": {
     "through": "~2.3.4",

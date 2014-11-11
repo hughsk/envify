@@ -5,18 +5,15 @@ function create(envs) {
 
   function visitProcessEnv(traverse, node, path, state) {
     var key = node.property.name
+    var value
 
-    for (var i = 0; i < envs.length; i++) {
-      var value = envs[i][key]
-      if (value !== undefined) {
-        utils.catchup(node.range[0], state)
-        utils.append(JSON.stringify(value), state)
-        utils.move(node.range[1], state)
-        return false
-      }
-    }
+    for (var i = 0; i < envs.length; i++)
+      if ((value = envs[i][key]) !== undefined)
+        break
 
-    return false
+    utils.catchup(node.range[0], state)
+    utils.append(JSON.stringify(value), state)
+    utils.move(node.range[1], state)
   }
 
   visitProcessEnv.test = function(node, path, state) {
