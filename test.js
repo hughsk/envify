@@ -63,8 +63,8 @@ test('Doesn\'t ignore assigning to a variable', function(t) {
       t.notEqual(-1, buffer.indexOf('oof.bar = "ipsum"'))
       t.notEqual(-1, buffer.indexOf('bar = "world"'))
       t.notEqual(-1, buffer.indexOf('rab = "world"'))
-      t.notEqual(-1, buffer.indexOf('process.env.NOTTHERE'))
-      t.notEqual(-1, buffer.indexOf('process.env.UNDEFINED'))
+      t.notEqual(-1, buffer.indexOf('a = undefined'))
+      t.notEqual(-1, buffer.indexOf('b = undefined'))
       t.end()
     })
     .end([
