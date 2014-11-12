@@ -104,6 +104,37 @@ b.transform(envify({
 b.bundle().pipe(output)
 ```
 
+## Purging `process.env` ##
+
+By default, environment variables that are not defined will be left untouched.
+This is because in some cases, you might want to run an envify transform over
+your source more than once, and removing these values would make that
+impossible.
+
+However, if any references to `process.env` are remaining after transforming
+your source with envify, browserify will automatically insert its shim for
+Node's process object, which will increase the size of your bundle. This weighs
+in at around 2KB, so if you're trying to be conservative with your bundle size
+you can "purge" these remaining variables such that any missing ones are simply
+replaced with undefined.
+
+To do so through the command-line, simply use the subarg syntax and include
+`purge` after `envify`, e.g.:
+
+``` bash
+browserify index.js -t [ envify purge --NODE_ENV development ]
+```
+
+Or if you're using the module API, you can pass `_: "purge"` into your
+arguments like so:
+
+``` javascript
+b.transform(envify({
+    _: 'purge'
+  , NODE_ENV: 'development'
+}))
+```
+
 ## Contributors ##
 
 * [hughsk](http://github.com/hughsk)

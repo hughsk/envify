@@ -122,3 +122,34 @@ test('Handles getter properties', function(t) {
       , 'var bar = process.env.DYNAMIC'
     ].join('\n'))
 })
+
+test('-t [ envify purge ]', function(t) {
+  var stream = envify()
+  var buffer = ''
+
+  stream(__filename, { _: ['purge'] })
+    .on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1, buffer.indexOf('var x = undefined'))
+      t.equal(-1, buffer.indexOf('process.env.PURGED'))
+      t.end()
+    })
+    .end('var x = process.env.PURGED')
+})
+
+test('-t [ envify purge --argument ]', function(t) {
+  var stream = envify({ argument: 'not purged' })
+  var buffer = ''
+
+  stream(__filename, { _: ['purge'] })
+    .on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1, buffer.indexOf('var x = undefined'), 'purges undefined variables')
+      t.notEqual(-1, buffer.indexOf('var y = "not purged"'), 'still inlines defined ones')
+      t.end()
+    })
+    .end([
+        'var x = process.env.PURGED'
+      , 'var y = process.env.argument'
+    ].join('\n'))
+})
