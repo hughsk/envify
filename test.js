@@ -153,3 +153,39 @@ test('-t [ envify purge --argument ]', function(t) {
       , 'var y = process.env.argument'
     ].join('\n'))
 })
+
+test('-t [ envify error ]', function(t) {
+  var stream = envify()
+  var buffer = ''
+  var caughtError = false;
+
+  stream(__filename, { _: ['error'] })
+    .on('data', function(d) { buffer += d })
+    .on('error', function (e) {
+      t.ok(e, 'throws error if env variable is missing');
+      t.end();
+    })
+    .on('end', function () {
+      t.fail('should throw error if env variable is missing')
+      t.end();
+    })
+    .end('var x = process.env.MISSING_VAR')
+})
+
+test('-t [ envify error --argument]', function(t) {
+  var stream = envify()
+  var buffer = ''
+  var caughtError = false;
+
+  stream(__filename, { _: ['error'], argument: 1 })
+    .on('data', function(d) { buffer += d })
+    .on('error', function (e) {
+      t.fail(e, 'should not throw if env variable is defined');
+      t.end();
+    })
+    .on('end', function () {
+      t.pass('does not throw error if env variable is defined')
+      t.end();
+    })
+    .end('var x = process.env.argument')
+})

@@ -1,9 +1,12 @@
 var Syntax = require('jstransform').Syntax
 var utils = require('jstransform/src/utils')
+var util = require('util')
 
 function create(envs) {
   var args  = [].concat(envs[0]._ || []).concat(envs[1]._ || [])
   var purge = args.indexOf('purge') !== -1
+  var error = args.indexOf('error') !== -1
+  var warn = args.indexOf('warn') !== -1
 
   function visitProcessEnv(traverse, node, path, state) {
     var key = node.property.name
@@ -18,6 +21,10 @@ function create(envs) {
 
     if (purge) {
       replaceEnv(node, state, undefined)
+    } else if (error || warn) {
+      var msg = util.format('envify did not find value for "%s" variable', node.property.name);
+      if(error) throw new Error(msg);
+      else console.log('WARN: ', msg);
     }
 
     return false
