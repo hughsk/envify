@@ -6,7 +6,7 @@ function create(envs) {
   var purge = args.indexOf('purge') !== -1
 
   function visitProcessEnv(traverse, node, path, state) {
-    var key = node.property.name
+    var key = node.property.name || node.property.value
 
     for (var i = 0; i < envs.length; i++) {
       var value = envs[i][key]
@@ -32,9 +32,8 @@ function create(envs) {
   visitProcessEnv.test = function(node, path, state) {
     return (
       node.type === Syntax.MemberExpression
-      && !node.computed
       && !(path[0].type === Syntax.AssignmentExpression && path[0].left === node)
-      && node.property.type === Syntax.Identifier
+      && node.property.type === (node.computed ? Syntax.Literal : Syntax.Identifier)
       && node.object.type === Syntax.MemberExpression
       && node.object.object.type === Syntax.Identifier
       && node.object.object.name === 'process'

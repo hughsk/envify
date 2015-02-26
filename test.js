@@ -7,6 +7,7 @@ test('Replaces environment variables', function(t) {
   var stream = envify({
       LOREM: 'ipsum'
     , HELLO: 'world'
+    , ZALGO: 'it comes'
   })
 
   stream()
@@ -14,11 +15,15 @@ test('Replaces environment variables', function(t) {
     .on('end', function() {
       t.notEqual(-1, buffer.indexOf('ipsum'))
       t.notEqual(-1, buffer.indexOf('world'))
+      t.notEqual(-1, buffer.indexOf('it comes'))
+      t.notEqual(-1, buffer.indexOf('process.env[ZALGO]'))
       t.end()
     })
     .end([
         'process.env.LOREM'
       , 'process.env.HELLO'
+      , 'process.env["ZALGO"]'
+      , 'process.env[ZALGO]'
     ].join('\n'))
 })
 
