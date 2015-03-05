@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "through": "~2.3.4",
-    "jstransform": "^7.0.0"
+    "jstransform": "^10.0.1"
   },
   "keywords": [
     "environment",
