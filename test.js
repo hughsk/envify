@@ -35,7 +35,9 @@ test('Ignores assignments', function(t) {
     .on('end', function() {
       t.notEqual(-1, buffer.indexOf('world'))
       t.notEqual(-1, buffer.indexOf('lorem'))
+      t.notEqual(-1, buffer.indexOf('process.env.LOREM'))
       t.notEqual(-1, buffer.indexOf('process.env["LOREM"]'))
+      t.notEqual(-1, buffer.indexOf('process.env.HELLO'))
       t.notEqual(-1, buffer.indexOf('process.env["HELLO"]'))
       t.notEqual(-1, buffer.indexOf('down'))
       t.equal(-1, buffer.indexOf('process.env.UP'))
@@ -43,7 +45,9 @@ test('Ignores assignments', function(t) {
     })
     .end([
         'process.env["LOREM"] += "lorem"'
-      , 'process.env["HELLO"]  = process.env["HELLO"] || "world"'
+      , 'process.env.LOREM += "lorem"'
+      , 'process.env["HELLO"] = process.env["HELLO"] || "world"'
+      , 'process.env.HELLO = process.env.HELLO || "world"'
       , 'process.env.UP'
     ].join('\n'))
 })

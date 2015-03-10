@@ -33,6 +33,7 @@ function create(envs) {
     return (
       node.type === Syntax.MemberExpression
       && !node.computed
+      && !(path[0].type === Syntax.AssignmentExpression && path[0].left === node)
       && node.property.type === Syntax.Identifier
       && node.object.type === Syntax.MemberExpression
       && node.object.object.type === Syntax.Identifier
