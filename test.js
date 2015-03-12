@@ -57,6 +57,27 @@ test('Ignores assignments', function(t) {
     ].join('\n'))
 })
 
+test('Ignores computed object', function(t) {
+  var buffer = ''
+  var stream = envify({
+      LOREM: 'ipsum'
+    , HELLO: 'world'
+  })
+  stream()
+    .on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1, buffer.indexOf('process[env].LOREM'))
+      t.notEqual(-1, buffer.indexOf('process["env"].LOREM'))
+      t.equal(-1, buffer.indexOf('process.env.HELLO'))
+      t.end()
+    })
+    .end([
+        'process[env].LOREM'
+      , 'process["env"].LOREM'
+      , 'process.env.HELLO'
+    ].join('\n'))
+})
+
 test('Doesn\'t ignore assigning to a variable', function(t) {
   var buffer = ''
   var stream = envify({
