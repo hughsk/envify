@@ -34,6 +34,7 @@ function create(envs) {
       node.type === Syntax.MemberExpression
       && !(path[0].type === Syntax.AssignmentExpression && path[0].left === node)
       && node.property.type === (node.computed ? Syntax.Literal : Syntax.Identifier)
+      && node.object.computed === false
       && node.object.type === Syntax.MemberExpression
       && node.object.object.type === Syntax.Identifier
       && node.object.object.name === 'process'
