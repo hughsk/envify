@@ -24,9 +24,14 @@ function create(envs) {
   }
 
   function replaceEnv(node, state, value) {
-    utils.catchup(node.range[0], state)
-    utils.append(JSON.stringify(value), state)
-    utils.move(node.range[1], state)
+    utils.catchup(node.range[0], state);
+    if (typeof value === 'function') {
+      utils.append(value, state);
+    }
+    else {
+      utils.append(JSON.stringify(value), state);
+    }
+    utils.move(node.range[1], state);
   }
 
   visitProcessEnv.test = function(node, path, state) {
