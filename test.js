@@ -27,7 +27,7 @@ test('Replaces environment variables', function(t) {
     ].join('\n'))
 })
 
-test('replaceEnv can now take functions', function(t) {
+test('allow functions to be pass to envify', function(t) {
   var buffer = '';
   var stream = envify({
     wildFunction: function() {
