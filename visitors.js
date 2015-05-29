@@ -25,7 +25,12 @@ function create(envs) {
 
   function replaceEnv(node, state, value) {
     utils.catchup(node.range[0], state)
-    utils.append(JSON.stringify(value), state)
+    if (typeof value === 'function') {
+      utils.append(value, state)
+    }
+    else {
+      utils.append(JSON.stringify(value), state)
+    }
     utils.move(node.range[1], state)
   }
 
