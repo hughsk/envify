@@ -27,6 +27,24 @@ test('Replaces environment variables', function(t) {
     ].join('\n'))
 })
 
+test('replaceEnv can now take functions', function(t) {
+  var buffer = '';
+  var stream = envify({
+    wildFunction: function() {
+      return 1+1;
+    }
+  });
+  stream()
+    .on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1,buffer.indexOf('function'));
+      t.end();
+    })
+    .end([
+        'process.env.wildFunction'
+    ].join('\n'));
+});
+
 test('Ignores assignments', function(t) {
   var buffer = ''
   var stream = envify({
