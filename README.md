@@ -85,6 +85,18 @@ browserify index.js -t [ envify --NODE_ENV production  ] > bundle.js
 Returns a transform stream that updates based on the Node process'
 `process.env` object.
 
+``` javascript
+var browserify = require('browserify')
+  , envify = require('envify')
+  , fs = require('fs')
+
+var b = browserify('main.js')
+  , output = fs.createWriteStream('bundle.js')
+
+b.transform(envify);
+b.bundle().pipe(output)
+```
+
 **require('envify/custom')([environment])**
 
 If you want to stay away from your environment variables, you can supply
@@ -102,6 +114,14 @@ b.transform(envify({
   NODE_ENV: 'development'
 }))
 b.bundle().pipe(output)
+```
+
+## Envify code in node_modules ##
+
+If you want to envify an existing lib/dependency, this code is often located in `node_modules` and by default Browserify will not apply the transform here. You have to use the `global` option of Browserify transform.
+
+```
+b.transform(envify,{global: true});
 ```
 
 ## Purging `process.env` ##
