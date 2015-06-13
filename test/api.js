@@ -1,6 +1,5 @@
-var envify = require('./custom')
+var envify = require('../custom')
   , test = require('tape')
-  , fs = require('fs')
 
 test('Replaces environment variables', function(t) {
   var buffer = ''
