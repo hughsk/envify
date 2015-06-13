@@ -4,7 +4,7 @@
   "description": "Selectively replace Node-style environment variables with plain strings.",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js | tap-spec"
+    "test": "tape test/*.js | tap-spec"
   },
   "bin": {
     "envify": "bin/envify"
@@ -16,12 +16,13 @@
   "author": "Hugh Kennedy <hughskennedy@gmail.com> (http://hughskennedy.com/)",
   "license": "MIT",
   "devDependencies": {
+    "browserify": "^10.2.4",
     "tap-spec": "^1.0.1",
     "tape": "~2.3.2"
   },
   "dependencies": {
     "through": "~2.3.4",
-    "jstransform": "^10.0.1"
+    "acorn": "^1.2.2"
   },
   "keywords": [
     "environment",
