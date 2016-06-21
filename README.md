@@ -135,6 +135,15 @@ b.transform(envify({
 }))
 ```
 
+## Throw or Warn if env variable is missing ##
+
+May be you want to be sure, that all `process.env` were replaced. There is two
+additional subargs to help you with that: `error` and `warn`.
+
+You can use it in the same way as `purge` subarg.
+
+Keep in mind that `purge`, `error` and `warn` are mutual exclusive.
+
 ## Contributors ##
 
 * [hughsk](http://github.com/hughsk)
