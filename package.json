@@ -16,12 +16,12 @@
   "author": "Hugh Kennedy <hughskennedy@gmail.com> (http://hughskennedy.com/)",
   "license": "MIT",
   "devDependencies": {
-    "tap-spec": "^1.0.1",
-    "tape": "~2.3.2"
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.0"
   },
   "dependencies": {
     "through": "~2.3.4",
-    "jstransform": "^10.0.1"
+    "jstransform": "^11.0.3"
   },
   "keywords": [
     "environment",
