@@ -100,9 +100,12 @@ var b = browserify('main.js')
 
 b.transform(envify({
   NODE_ENV: 'development'
-}))
+}), {global: true})
 b.bundle().pipe(output)
 ```
+
+Passing `{global: true}` as second argument is required for browserify to transform
+modules included in `node_modules`.
 
 ## Purging `process.env` ##
 
