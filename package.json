@@ -20,7 +20,7 @@
     "tape": "^4.6.0"
   },
   "dependencies": {
-    "esprima": "~3.1.0",
+    "esprima": "^4.0.0",
     "through": "~2.3.4"
   },
   "keywords": [
