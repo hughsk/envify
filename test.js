@@ -183,3 +183,29 @@ test('-t [ envify purge --argument ]', function(t) {
       , 'var y = process.env.argument'
     ].join('\n'))
 })
+
+test('-t [ envify dotenv ]', function(t) {
+  var stream = envify({ argument: 'not purged' })
+  var buffer = ''
+
+  stream(__filename, { _: ['dotenv'] })
+    .on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1, buffer.indexOf('var x = "Hello, World!"'), 'replaces with value from dotenv file')
+      t.end()
+    })
+    .end('var x = process.env.MESSAGE_FROM_DOTENV')
+})
+
+test('-t [ envify dotenv --MESSAGE_FROM_DOTENV intercepted ]', function(t) {
+  var stream = envify({ argument: 'not purged' })
+  var buffer = ''
+
+  stream(__filename, { _: ['dotenv'], MESSAGE_FROM_DOTENV: 'intercepted' })
+    .on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1, buffer.indexOf('var x = "intercepted"'), 'uses arguments before dotenv file')
+      t.end()
+    })
+    .end('var x = process.env.MESSAGE_FROM_DOTENV')
+})
