@@ -8,7 +8,15 @@ var processEnvPattern = /\bprocess\.env\b/
 var dotenvCache
 function getDotenv() {
   if (dotenvCache === undefined) {
-    dotenvCache = dotenv.parse(fs.readFileSync('.env'))
+    try {
+      dotenvCache = dotenv.parse(fs.readFileSync('.env'))
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        dotenvCache = {}
+      } else {
+        throw err
+      }
+    }
   }
 
   return dotenvCache
