@@ -1,7 +1,18 @@
-var esprima = require('esprima')
+var dotenv = require('dotenv')
+  , esprima = require('esprima')
+  , fs = require('fs')
   , through = require('through')
 
 var processEnvPattern = /\bprocess\.env\b/
+
+var dotenvCache
+function getDotenv() {
+  if (dotenvCache === undefined) {
+    dotenvCache = dotenv.parse(fs.readFileSync('.env'))
+  }
+
+  return dotenvCache
+}
 
 module.exports = function(rootEnv) {
   rootEnv = rootEnv || process.env || {}
@@ -23,6 +34,10 @@ module.exports = function(rootEnv) {
       var args  = [].concat(envs[0]._ || []).concat(envs[1]._ || [])
       var purge = args.indexOf('purge') !== -1
       var replacements = []
+
+      if (args.indexOf('dotenv') !== -1) {
+        envs.push(getDotenv())
+      }
 
       function match(node) {
         return (

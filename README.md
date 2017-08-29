@@ -135,6 +135,27 @@ b.transform(envify({
 }))
 ```
 
+## Loading `.env` file ##
+
+Envify can load a `.env` file for you using the
+[dotenv](https://github.com/motdotla/dotenv) package. To enable this
+functionallity, simply use the subarg syntax and include `dotenv` after
+`envify`, e.g.:
+
+``` bash
+browserify index.js -t [ envify dotenv --NODE_ENV development ]
+```
+
+Or if you're using the module API, you can pass `_: "dotenv"` into your
+arguments like so:
+
+``` javascript
+b.transform(envify({
+    _: 'dotenv'
+  , NODE_ENV: 'development'
+}))
+```
+
 ## Contributors ##
 
 * [hughsk](http://github.com/hughsk)
