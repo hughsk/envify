@@ -183,3 +183,21 @@ test('-t [ envify purge --argument ]', function(t) {
       , 'var y = process.env.argument'
     ].join('\n'))
 })
+
+test('Supports modern JS syntax', function(t) {
+  var env    = { ES6: 'es2015', ES2015: 'es6' }
+  var buffer = ''
+  var stream = envify(env)
+  var counter = 0
+
+  stream().on('data', function(d) { buffer += d })
+    .on('end', function() {
+      t.notEqual(-1, buffer.indexOf('foo = "es2015"'))
+      t.notEqual(-1, buffer.indexOf('b: "es6"'))
+      t.end()
+    })
+    .end([
+        'async function lol (foo = process.env.ES6) { console.log(foo) }'
+      , ';({ ...xyz, b }) => ({ ...xyz, b: process.env.ES2015, c: b })'
+    ].join('\n'))
+})
