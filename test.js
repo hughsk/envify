@@ -188,7 +188,6 @@ test('Supports modern JS syntax', function(t) {
   var env    = { ES6: 'es2015', ES2015: 'es6' }
   var buffer = ''
   var stream = envify(env)
-  var counter = 0
 
   stream().on('data', function(d) { buffer += d })
     .on('end', function() {
