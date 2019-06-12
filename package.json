@@ -20,8 +20,10 @@
     "tape": "^4.6.0"
   },
   "dependencies": {
-    "esprima": "^4.0.0",
-    "through": "~2.3.4"
+    "acorn-node": "^1.7.0",
+    "dash-ast": "^1.0.0",
+    "multisplice": "^1.0.0",
+    "through2": "^3.0.1"
   },
   "keywords": [
     "environment",

@@ -198,6 +198,6 @@ test('Supports modern JS syntax', function(t) {
     })
     .end([
         'async function lol (foo = process.env.ES6) { console.log(foo) }'
-      , ';({ ...xyz, b }) => ({ ...xyz, b: process.env.ES2015, c: b })'
+      , ';({ b, ...xyz }) => ({ ...xyz, b: process.env.ES2015, c: b })'
     ].join('\n'))
 })

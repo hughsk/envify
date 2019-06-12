@@ -1,7 +1,19 @@
-var esprima = require('esprima')
-  , through = require('through')
+var acorn = require('acorn-node')
+  , dash = require('dash-ast')
+  , msplice = require('multisplice')
+  , through = require('through2')
 
 var processEnvPattern = /\bprocess\.env\b/
+
+function equalNodes(a, b) {
+  if (a.type !== b.type) return false
+  switch (a.type) {
+    case 'Literal': return a.value === b.value
+    case 'Identifier': return a.name === b.name
+    case 'MemberExpression': return a.computed === b.computed && equalNodes(a.object, b.object) && equalNodes(a.property, b.property)
+  }
+  return false
+}
 
 module.exports = function(rootEnv) {
   rootEnv = rootEnv || process.env || {}
@@ -9,14 +21,14 @@ module.exports = function(rootEnv) {
   return function envify(file, argv) {
     if (/\.json$/.test(file)) return through()
 
-    var Syntax = esprima.Syntax
     var buffer = []
     argv = argv || {}
 
     return through(write, flush)
 
-    function write(data) {
+    function write(data, enc, cb) {
       buffer.push(data)
+      cb()
     }
 
     function transform(source, envs) {
@@ -26,54 +38,56 @@ module.exports = function(rootEnv) {
 
       function match(node) {
         return (
-          node.type === Syntax.MemberExpression
-          && node.object.type === Syntax.MemberExpression
+          node.type === 'MemberExpression'
+          && node.object.type === 'MemberExpression'
           && node.object.computed === false
-          && node.object.object.type === Syntax.Identifier
+          && node.object.object.type === 'Identifier'
           && node.object.object.name === 'process'
-          && node.object.property.type === Syntax.Identifier
+          && node.object.property.type === 'Identifier'
           && node.object.property.name === 'env'
-          && (node.computed ? node.property.type === Syntax.Literal : node.property.type === Syntax.Identifier)
+          && (node.computed ? node.property.type === 'Literal' : node.property.type === 'Identifier')
         )
       }
 
-      esprima.parse(source, { tolerant: true }, function(node, meta) {
+      var ast = acorn.parse(source)
+
+      dash(ast, { leave: function(node) {
         if (match(node)) {
           var key = node.property.name || node.property.value
           for (var i = 0; i < envs.length; i++) {
             var value = envs[i][key]
             if (value !== undefined) {
-              replacements.push({ node: node, meta: meta, value: JSON.stringify(value) })
+              replacements.push({ node: node, value: JSON.stringify(value) })
               return
             }
           }
           if (purge) {
-            replacements.push({ node: node, meta: meta, value: undefined })
+            replacements.push({ node: node, value: 'undefined' })
           }
-        } else if (node.type === Syntax.AssignmentExpression) {
+        } else if (node.type === 'AssignmentExpression') {
           for (var i = 0; i < replacements.length; ++i) {
-            if (replacements[i].node === node.left) {
+            if (equalNodes(replacements[i].node, node.left)) {
               replacements.splice(i, 1)
             }
           }
         }
-      })
+      } })
 
-      var result = source
+      var splicer = msplice(source)
       if (replacements.length > 0) {
         replacements.sort(function (a, b) {
-          return b.meta.start.offset - a.meta.start.offset
+          return b.start - a.start
         })
         for (var i = 0; i < replacements.length; i++) {
           var r = replacements[i]
-          result = result.slice(0, r.meta.start.offset) + r.value + result.slice(r.meta.end.offset)
+          splicer.splice(r.node.start, r.node.end, r.value)
         }
       }
 
-      return result
+      return splicer.toString()
     }
 
-    function flush() {
+    function flush(cb) {
       var source = buffer.join('')
 
       if (processEnvPattern.test(source)) {
@@ -84,8 +98,9 @@ module.exports = function(rootEnv) {
         }
       }
 
-      this.queue(source)
-      this.queue(null)
+      this.push(source)
+      this.push(null)
+      cb()
     }
   }
 }
