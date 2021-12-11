@@ -1,4 +1,5 @@
-var esprima = require('esprima')
+var dash = require('dash-ast')
+  , meriyah = require('meriyah')
   , through = require('through')
 
 var processEnvPattern = /\bprocess\.env\b/
@@ -9,7 +10,6 @@ module.exports = function(rootEnv) {
   return function envify(file, argv) {
     if (/\.json$/.test(file)) return through()
 
-    var Syntax = esprima.Syntax
     var buffer = []
     argv = argv || {}
 
@@ -26,47 +26,48 @@ module.exports = function(rootEnv) {
 
       function match(node) {
         return (
-          node.type === Syntax.MemberExpression
-          && node.object.type === Syntax.MemberExpression
+          node.type === 'MemberExpression'
+          && node.object.type === 'MemberExpression'
           && node.object.computed === false
-          && node.object.object.type === Syntax.Identifier
+          && node.object.object.type === 'Identifier'
           && node.object.object.name === 'process'
-          && node.object.property.type === Syntax.Identifier
+          && node.object.property.type === 'Identifier'
           && node.object.property.name === 'env'
-          && (node.computed ? node.property.type === Syntax.Literal : node.property.type === Syntax.Identifier)
+          && (node.computed ? node.property.type === 'Literal' : node.property.type === 'Identifier')
         )
       }
 
-      esprima.parse(source, { tolerant: true }, function(node, meta) {
+      var ast = meriyah.parse(source, { tolerant: true, ranges: true })
+      dash(ast, { leave: function(node) {
         if (match(node)) {
           var key = node.property.name || node.property.value
           for (var i = 0; i < envs.length; i++) {
             var value = envs[i][key]
             if (value !== undefined) {
-              replacements.push({ node: node, meta: meta, value: JSON.stringify(value) })
+              replacements.push({ node: node, value: JSON.stringify(value) })
               return
             }
           }
           if (purge) {
-            replacements.push({ node: node, meta: meta, value: undefined })
+            replacements.push({ node: node, value: undefined })
           }
-        } else if (node.type === Syntax.AssignmentExpression) {
+        } else if (node.type === 'AssignmentExpression') {
           for (var i = 0; i < replacements.length; ++i) {
             if (replacements[i].node === node.left) {
               replacements.splice(i, 1)
             }
           }
         }
-      })
+      } })
 
       var result = source
       if (replacements.length > 0) {
         replacements.sort(function (a, b) {
-          return b.meta.start.offset - a.meta.start.offset
+          return b.node.start - a.node.start
         })
         for (var i = 0; i < replacements.length; i++) {
           var r = replacements[i]
-          result = result.slice(0, r.meta.start.offset) + r.value + result.slice(r.meta.end.offset)
+          result = result.slice(0, r.node.start) + r.value + result.slice(r.node.end)
         }
       }
 

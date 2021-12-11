@@ -20,7 +20,8 @@
     "tape": "^4.6.0"
   },
   "dependencies": {
-    "esprima": "^4.0.0",
+    "dash-ast": "^2.0.1",
+    "meriyah": "^4.2.0",
     "through": "~2.3.4"
   },
   "keywords": [
